@@ -93,14 +93,14 @@ export class UsersService {
   // find all user
   public async findAll(usersQuery: GetUsersDto): Promise<IPagination<User>> {
     const searchableFields = ['name', 'role'];
+    const { page, limit, search, ...filters } = usersQuery;
+
     const users = this.paginationProvider.paginateQuery(
       {
-        limit: usersQuery?.limit,
-        page: usersQuery?.page,
-        search: usersQuery?.search,
-        filters: {
-          role: usersQuery?.role,
-        },
+        limit,
+        page,
+        search,
+        filters,
       },
       searchableFields,
       this.usersRepository,

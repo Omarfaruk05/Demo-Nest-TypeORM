@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
-import { ObjectLiteral, Repository, Like, Brackets } from 'typeorm';
+import { ObjectLiteral, Repository, Brackets } from 'typeorm';
 import { PaginationQueryDto } from './pagination-query.dto';
 import { IPagination } from './pagination.interface';
 
@@ -17,7 +17,7 @@ export class PaginationProvider {
     searchableFields: string[],
     repository: Repository<T>,
   ): Promise<IPagination<T>> {
-    const { page = 1, limit = 10, search, filters } = paginationQuery;
+    const { page, limit, search, filters } = paginationQuery;
 
     const queryBuilder = repository.createQueryBuilder('entity');
 

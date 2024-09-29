@@ -10,6 +10,10 @@ class GetUsersBaseDto {
   @IsOptional()
   role?: string;
 
+  @IsString()
+  @IsOptional()
+  name?: string;
+
   @IsDate()
   @IsOptional()
   startDate?: Date;

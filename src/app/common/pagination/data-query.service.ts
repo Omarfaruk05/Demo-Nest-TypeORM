@@ -2,22 +2,22 @@ import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { ObjectLiteral, Repository, Brackets } from 'typeorm';
-import { PaginationQueryDto } from './pagination-query.dto';
 import { IPagination } from './pagination.interface';
+import { PaginationQueryDto } from './dto/data-query.dto';
 
 @Injectable()
-export class PaginationProvider {
+export class DataQueryService {
   constructor(
     @Inject(REQUEST)
     private readonly request: Request,
   ) {}
 
-  public async paginateQuery<T extends ObjectLiteral>(
+  public async dataQuery<T extends ObjectLiteral>(
     paginationQuery: PaginationQueryDto,
     searchableFields: string[],
     repository: Repository<T>,
   ): Promise<IPagination<T>> {
-    const { page, limit, search, filters } = paginationQuery;
+    const { page = 1, limit = 10, search, filters } = paginationQuery;
 
     const queryBuilder = repository.createQueryBuilder('entity');
 

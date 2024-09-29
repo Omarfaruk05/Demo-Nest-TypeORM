@@ -11,7 +11,7 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashingProvider } from '../auth/providers/hashing.provider';
 import { MailService } from '../mail/mail.service';
-import { PaginationProvider } from 'src/app/common/pagination/pagination.provider';
+import { DataQueryService } from 'src/app/common/pagination/data-query.service';
 import { IPagination } from 'src/app/common/pagination/pagination.interface';
 import { GetUsersDto } from './dto/get-users.dto';
 
@@ -38,7 +38,7 @@ export class UsersService {
     /**
      * Inject paginationProvider
      */
-    private readonly paginationProvider: PaginationProvider,
+    private readonly dataQueryService: DataQueryService,
   ) {}
 
   // Functions for controller
@@ -95,7 +95,7 @@ export class UsersService {
     const searchableFields = ['name', 'role'];
     const { page, limit, search, ...filters } = usersQuery;
 
-    const users = this.paginationProvider.paginateQuery(
+    const users = this.dataQueryService.dataQuery(
       {
         limit,
         page,

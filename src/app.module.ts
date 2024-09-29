@@ -14,7 +14,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthenticationGuard } from './app/guards/authentication.guard';
 import { DataResponseInterceptor } from './app/common/interceptor/data-response.interceptor';
 import { MailModule } from './app/module/mail/mail.module';
-import { PaginationModule } from './app/common/pagination/pagination.module';
+import { PaginationModule } from './app/common/pagination/data-query.module';
 
 const ENV = process.env.NODE_ENV;
 

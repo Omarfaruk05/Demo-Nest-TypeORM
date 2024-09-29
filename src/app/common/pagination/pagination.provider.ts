@@ -1,71 +1,68 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
-import { ObjectLiteral, Repository, FindOptionsWhere, Like } from 'typeorm';
+import { ObjectLiteral, Repository, Like, Brackets } from 'typeorm';
 import { PaginationQueryDto } from './pagination-query.dto';
 import { IPagination } from './pagination.interface';
 
 @Injectable()
 export class PaginationProvider {
   constructor(
-    /**
-     * Inject Request
-     */
     @Inject(REQUEST)
     private readonly request: Request,
   ) {}
 
-  // Service Function starts here
   public async paginateQuery<T extends ObjectLiteral>(
     paginationQuery: PaginationQueryDto,
+    searchableFields: string[],
     repository: Repository<T>,
   ): Promise<IPagination<T>> {
     const { page = 1, limit = 10, search, filters } = paginationQuery;
 
-    // Dynamic where conditions
-    const whereConditions: any[] = [];
+    const queryBuilder = repository.createQueryBuilder('entity');
 
-    // Add dynamic filters
+    // Add dynamic filters (AND conditions)
     if (filters && Object.keys(filters).length > 0) {
       for (const [field, value] of Object.entries(filters)) {
-        whereConditions.push({ [field]: value });
+        queryBuilder.andWhere(`entity.${field} = :${field}`, {
+          [field]: value,
+        });
       }
     }
 
-    // Add search logic
+    // Add search logic (OR conditions)
     if (search) {
-      const searchableFields = ['name', 'role'];
-      const searchConditions = searchableFields.map((field) => ({
-        [field]: Like(`%${search}%`),
-      }));
-      // Combine search conditions with filters using OR
-      whereConditions.push(...searchConditions);
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          searchableFields.forEach((field, index) => {
+            qb.orWhere(`entity.${field} LIKE :search`, {
+              search: `%${search}%`,
+            });
+          });
+        }),
+      );
     }
 
-    console.log(whereConditions); // Debugging line
+    // Apply pagination
+    queryBuilder.skip((page - 1) * limit).take(limit);
 
-    // Fetch paginated data with dynamic where conditions
-    const [results, total] = await repository.findAndCount({
-      where: whereConditions.length > 0 ? whereConditions : undefined,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+    // Execute query
+    const [results, total] = await queryBuilder.getManyAndCount();
 
-    // Calculate the page numbers
+    // Pagination meta and links
     const totalPages = Math.ceil(total / limit);
     const nextPage = page < totalPages ? page + 1 : null;
     const previousPage = page > 1 ? page - 1 : null;
 
-    // Create pagination links
     const baseUrl = `${this.request.protocol}://${this.request.headers.host}/`;
     const newUrl = new URL(this.request.url, baseUrl);
 
-    const finalResponse: IPagination<T> = {
+    return {
       meta: {
-        total: total,
-        page: page,
-        limit: limit,
-        totalPages: totalPages,
+        total,
+        page,
+        limit,
+        totalPages,
       },
       links: {
         first: `${newUrl.origin}${newUrl.pathname}?limit=${limit}&page=1`,
@@ -80,7 +77,5 @@ export class PaginationProvider {
       },
       data: results,
     };
-
-    return finalResponse;
   }
 }

@@ -8,6 +8,9 @@ import { PaginationQueryDto } from './dto/data-query.dto';
 @Injectable()
 export class DataQueryService {
   constructor(
+    /**
+     * Inject Request form express
+     */
     @Inject(REQUEST)
     private readonly request: Request,
   ) {}

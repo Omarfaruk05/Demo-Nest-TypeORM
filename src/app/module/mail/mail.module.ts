@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { MailService } from './mail.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserOTP } from './entities/user-otp.entity';
 
 @Global()
 @Module({
@@ -34,6 +36,7 @@ import { MailService } from './mail.service';
         },
       }),
     }),
+    TypeOrmModule.forFeature([UserOTP]),
   ],
   providers: [MailService],
   exports: [MailService],

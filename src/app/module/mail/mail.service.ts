@@ -110,4 +110,26 @@ export class MailService {
     }
     return user;
   }
+
+  // reSendOTP
+
+  public async resendOTP(userId: number, email: string) {
+    if (!userId || !email) {
+      throw new BadRequestException('Empty otp details are not allowed');
+    }
+
+    // find the uer
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException("User doesn't found");
+    }
+
+    //delete previous userOTP data form database
+    await this.userOTPRepository.delete({ userId });
+
+    //resend otp
+    const result = await this.sendOtp(user);
+    return result;
+  }
 }

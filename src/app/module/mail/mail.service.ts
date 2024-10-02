@@ -1,11 +1,18 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { UserOTP } from './entities/user-otp.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserOTPDto } from './dtos/user-opt.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class MailService {
@@ -20,6 +27,13 @@ export class MailService {
      */
     @InjectRepository(UserOTP)
     private readonly userOTPRepository: Repository<UserOTP>,
+
+    /**
+     *
+     * Inject usersService
+     */
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
   ) {}
 
   // Service Functions starts here
@@ -35,7 +49,7 @@ export class MailService {
       userId: user.id,
       otp: hashedOTP,
       createDate: Date.now(),
-      expiresAt: Date.now() + 6000,
+      expiresAt: Date.now() + 60000,
     });
 
     newOTPData = await this.userOTPRepository.save(newOTPData);
@@ -52,5 +66,48 @@ export class MailService {
     });
 
     return newOTPData;
+  }
+
+  // Verify OTP
+  public async verifyOTP(userOTPDto: UserOTPDto) {
+    // check the userOTPDto exist
+    if (!userOTPDto.userId || !userOTPDto.otp) {
+      throw new BadRequestException('Empty otp details are not allowed.');
+    }
+
+    const userOTPRecords = await this.userOTPRepository.find({
+      where: {
+        id: userOTPDto.userId,
+      },
+    });
+
+    if (userOTPRecords.length <= 0) {
+      throw new NotFoundException(
+        "Account record doesn't exist or has been verified already. Please sign up or login",
+      );
+    }
+    const { expiresAt, otp: hashedOTP } = userOTPRecords[0];
+
+    // check the otp expiration
+    if (expiresAt.getTime() < Date.now()) {
+      await this.userOTPRepository.delete({
+        userId: userOTPDto.userId,
+      });
+      throw new BadRequestException('Code has expired. Please request again.');
+    }
+
+    // Compare the otp
+    const validOTP = await bcrypt.compare(userOTPDto.otp, hashedOTP);
+
+    if (!validOTP) {
+      throw new BadRequestException('Invalid code passed. Check your inbox');
+    }
+
+    // return the user
+    const user = await this.usersService.findOne(userOTPDto.userId);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    return user;
   }
 }

@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
@@ -6,6 +6,9 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { MailService } from './mail.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOTP } from './entities/user-otp.entity';
+import { MailController } from './mail.controller';
+import { AuthModule } from '../auth/auth.module';
+import { UsersModule } from '../users/users.module';
 
 @Global()
 @Module({
@@ -37,8 +40,11 @@ import { UserOTP } from './entities/user-otp.entity';
       }),
     }),
     TypeOrmModule.forFeature([UserOTP]),
+    forwardRef(() => AuthModule),
+    forwardRef(() => UsersModule),
   ],
   providers: [MailService],
   exports: [MailService],
+  controllers: [MailController],
 })
 export class MailModule {}

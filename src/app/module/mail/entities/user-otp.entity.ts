@@ -3,10 +3,8 @@ import { ENUM_ROLES } from 'src/app/common/enums/user.enum';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -15,13 +13,13 @@ export class UserOTP {
   id: number;
 
   @Column({
-    type: 'number',
+    type: 'int',
     nullable: false,
   })
   userId: number;
 
   @Column({
-    type: 'string',
+    type: 'varchar',
     length: 512,
     nullable: false,
   })
@@ -35,10 +33,4 @@ export class UserOTP {
     nullable: false,
   })
   expiresAt: Date;
-
-  @UpdateDateColumn()
-  updateDate: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
 }

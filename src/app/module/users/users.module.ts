@@ -9,7 +9,11 @@ import { MailModule } from '../mail/mail.module';
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
-  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule)],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    forwardRef(() => AuthModule),
+    forwardRef(() => MailModule),
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}

@@ -45,6 +45,13 @@ export class User {
   })
   role?: ENUM_ROLES;
 
+  @Column({
+    type: 'boolean',
+    default: false,
+    nullable: true,
+  })
+  isVerified?: boolean;
+
   @CreateDateColumn()
   createDate: Date;
 

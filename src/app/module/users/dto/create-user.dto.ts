@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -40,4 +41,11 @@ export class CreateUserDto {
   @IsEnum(ENUM_ROLES)
   @IsOptional()
   role?: ENUM_ROLES;
+
+  /**
+   * isVerified
+   */
+  @IsBoolean()
+  @IsOptional()
+  isVerified?: boolean;
 }

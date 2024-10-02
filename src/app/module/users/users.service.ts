@@ -111,12 +111,14 @@ export class UsersService {
 
   // Find single user by ID
   public async findOne(id: number) {
+    console.log('Repository:', this.usersRepository);
     let user: User | undefined = undefined;
 
     try {
       // this return null is user does not exist
       user = await this.usersRepository.findOneBy({ id });
     } catch (error) {
+      console.log(error);
       throw new RequestTimeoutException(error, {
         description: 'Could not fetch the user',
       });
@@ -152,6 +154,7 @@ export class UsersService {
 
   // Update single user
   public async update(id: number, updateUserDto: UpdateUserDto) {
+    console.log(updateUserDto);
     let existUser = undefined;
     try {
       existUser = await this.usersRepository.findOneBy({ id });
@@ -167,7 +170,9 @@ export class UsersService {
     }
 
     // Set updated data
-    existUser.name = updateUserDto.name;
+    existUser.name = updateUserDto.name ?? existUser.name;
+    existUser.role = updateUserDto.role ?? existUser.role;
+    existUser.isVerified = updateUserDto.isVerified ?? existUser.isVerified;
 
     //Save updated data to database
     return await this.usersRepository.save(existUser);

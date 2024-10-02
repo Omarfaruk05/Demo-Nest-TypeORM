@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { ENUM_ROLES } from 'src/app/common/enums/user.enum';
+import { ENUM_ROLES } from 'src/common/enums/user.enum';
 import {
   Column,
   CreateDateColumn,

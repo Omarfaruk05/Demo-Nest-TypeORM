@@ -6,7 +6,7 @@ import { BcryptProvider } from './providers/bcrypt.provider';
 import { UsersModule } from '../users/users.module';
 import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { ConfigModule } from '@nestjs/config';
-import jwtConfig from 'src/app/config/jwt.config';
+import jwtConfig from 'src/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

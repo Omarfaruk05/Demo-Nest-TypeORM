@@ -11,9 +11,9 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashingProvider } from '../auth/providers/hashing.provider';
 import { MailService } from '../mail/mail.service';
-import { DataQueryService } from 'src/app/common/pagination/data-query.service';
-import { IPagination } from 'src/app/common/pagination/pagination.interface';
 import { GetUsersDto } from './dto/get-users.dto';
+import { DataQueryService } from 'src/common/data-query/data-query.service';
+import { IPagination } from 'src/common/data-query/pagination.interface';
 
 @Injectable()
 export class UsersService {
@@ -118,7 +118,6 @@ export class UsersService {
       // this return null is user does not exist
       user = await this.usersRepository.findOneBy({ id });
     } catch (error) {
-      console.log(error);
       throw new RequestTimeoutException(error, {
         description: 'Could not fetch the user',
       });

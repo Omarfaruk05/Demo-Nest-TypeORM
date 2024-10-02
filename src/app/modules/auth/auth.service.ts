@@ -49,11 +49,15 @@ export class AuthService {
 
     let isEqual: boolean = false;
 
+    console.log(loginDto.password);
+    console.log(user.password);
+
     try {
       isEqual = await this.hashingProvider.comparePassword(
         loginDto.password,
         user.password,
       );
+      console.log(isEqual);
     } catch (error) {
       throw new RequestTimeoutException(error, {
         description: 'Could not compare password',
@@ -115,7 +119,7 @@ export class AuthService {
     }
 
     // update the user verification
-    const update = await this.usersService.update(userOTPDto.userId, {
+    await this.usersService.update(userOTPDto.userId, {
       isVerified: true,
     });
 
@@ -125,7 +129,7 @@ export class AuthService {
       throw new NotFoundException('User not found.');
     }
 
-    return user;
+    return await this.generateTokensProvider.generateTokens(user);
   }
 
   // reSendOTP

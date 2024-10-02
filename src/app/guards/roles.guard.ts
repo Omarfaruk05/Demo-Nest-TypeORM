@@ -5,8 +5,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { REQUEST_USER_KEY } from '../common/constants/user.constant';
-import { User } from '../module/users/entities/user.entity';
+import { REQUEST_USER_KEY } from '../../common/constants/user.constant';
+import { User } from '../modules/users/entities/user.entity';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

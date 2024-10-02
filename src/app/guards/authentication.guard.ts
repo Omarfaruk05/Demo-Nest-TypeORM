@@ -10,9 +10,12 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import { Request } from 'express';
-import jwtConfig from '../config/jwt.config';
-import { REQUEST_USER_KEY, ROLES_KEY } from '../common/constants/user.constant';
-import { ENUM_ROLES } from '../common/enums/user.enum';
+import jwtConfig from '../../config/jwt.config';
+import {
+  REQUEST_USER_KEY,
+  ROLES_KEY,
+} from '../../common/constants/user.constant';
+import { ENUM_ROLES } from '../../common/enums/user.enum';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {

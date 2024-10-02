@@ -34,7 +34,7 @@ export class MailService {
       userId: user.id,
       otp: hashedOTP,
       createDate: new Date(),
-      expiresAt: new Date(Date.now() + 60000),
+      expiresAt: new Date(Date.now() + 600000),
     });
 
     newOTPData = await this.userOTPRepository.save(newOTPData);

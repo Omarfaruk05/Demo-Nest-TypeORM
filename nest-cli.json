@@ -6,7 +6,7 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "app/module/mail/templates",
+        "include": "app/modules/mail/templates",
         "outDir": "dist/",
         "watchAssets": true
       }

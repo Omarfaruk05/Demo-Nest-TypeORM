@@ -129,7 +129,8 @@ export class AuthService {
       throw new NotFoundException('User not found.');
     }
 
-    return await this.generateTokensProvider.generateTokens(user);
+    const tokens = await this.generateTokensProvider.generateTokens(user);
+    return tokens;
   }
 
   // reSendOTP

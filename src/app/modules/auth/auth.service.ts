@@ -9,14 +9,9 @@ import { HashingProvider } from './providers/hashing.provider';
 import { LoginDto } from './dtos/login.dto';
 import { UsersService } from '../users/users.service';
 import { GenerateTokensProvider } from './providers/generate-tokens.provider';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import * as bcrypt from 'bcrypt';
 import { UserOTPDto } from './dtos/user-otp.dot';
-import { Repository } from 'typeorm';
-import { UserOTP } from '../mail/entities/user-otp.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from '../mail/mail.service';
-import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -71,10 +66,9 @@ export class AuthService {
   }
 
   // refresh token service
-  public async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    const userId = await this.generateTokensProvider.gerUserIdByRefreshToken(
-      refreshTokenDto.refreshToken,
-    );
+  public async refreshToken(refreshToken: string) {
+    const userId =
+      await this.generateTokensProvider.gerUserIdByRefreshToken(refreshToken);
 
     try {
       const user = await this.usersService.findOne(userId);

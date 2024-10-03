@@ -111,7 +111,6 @@ export class UsersService {
 
   // Find single user by ID
   public async findOne(id: number) {
-    console.log('Repository:', this.usersRepository);
     let user: User | undefined = undefined;
 
     try {
@@ -153,7 +152,6 @@ export class UsersService {
 
   // Update single user
   public async update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
     let existUser = undefined;
     try {
       existUser = await this.usersRepository.findOneBy({ id });

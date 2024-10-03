@@ -1,8 +1,15 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { UserOTPDto } from './dtos/user-otp.dot';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -15,8 +22,11 @@ export class AuthController {
 
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
-  public refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshToken(refreshTokenDto);
+  public refreshToken(@Req() req: Request) {
+    //get refresh token form cookies
+    const refreshToken = req.cookies?.refreshToken as string;
+
+    return this.authService.refreshToken(refreshToken);
   }
 
   // verify otp route

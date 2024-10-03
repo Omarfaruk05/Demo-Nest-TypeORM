@@ -16,6 +16,7 @@ import { Repository } from 'typeorm';
 import { UserOTP } from '../mail/entities/user-otp.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from '../mail/mail.service';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -49,15 +50,11 @@ export class AuthService {
 
     let isEqual: boolean = false;
 
-    console.log(loginDto.password);
-    console.log(user.password);
-
     try {
       isEqual = await this.hashingProvider.comparePassword(
         loginDto.password,
         user.password,
       );
-      console.log(isEqual);
     } catch (error) {
       throw new RequestTimeoutException(error, {
         description: 'Could not compare password',
@@ -68,7 +65,9 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect password');
     }
 
-    return await this.generateTokensProvider.generateTokens(user);
+    const tokens = await this.generateTokensProvider.generateTokens(user);
+
+    return tokens;
   }
 
   // refresh token service

@@ -12,6 +12,7 @@ import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import * as bcrypt from 'bcrypt';
 import { UserOTPDto } from './dtos/user-otp.dot';
 import { MailService } from '../mail/mail.service';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {

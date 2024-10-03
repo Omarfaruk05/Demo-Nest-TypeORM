@@ -6,6 +6,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request, Response } from 'express';
 import { map, Observable } from 'rxjs';
 
 @Injectable()
@@ -13,8 +14,8 @@ export class DataResponseInterceptor implements NestInterceptor {
   constructor(private readonly configService: ConfigService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
-    const response = context.switchToHttp().getResponse();
+    const request: Request = context.switchToHttp().getRequest();
+    const response: Response = context.switchToHttp().getResponse();
 
     return next.handle().pipe(
       map((data) => {
@@ -29,6 +30,9 @@ export class DataResponseInterceptor implements NestInterceptor {
             secure: true,
             maxAge: 1000 * 60 * 60 * 24, // (1 day in milliseconds)
           });
+        }
+        if (request.path === '/auth/logout') {
+          response.clearCookie('refreshToken');
         }
 
         return {

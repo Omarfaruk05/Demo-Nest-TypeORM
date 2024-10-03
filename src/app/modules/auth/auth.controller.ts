@@ -1,15 +1,17 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   Req,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { UserOTPDto } from './dtos/user-otp.dot';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -20,7 +22,17 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Post('refresh-token')
+  @Get('logout')
+  @HttpCode(HttpStatus.OK)
+  public logOut() {
+    // clear cookies
+
+    return {
+      message: 'Successfully logged out.',
+    };
+  }
+
+  @Get('refresh-token')
   @HttpCode(HttpStatus.OK)
   public refreshToken(@Req() req: Request) {
     //get refresh token form cookies
